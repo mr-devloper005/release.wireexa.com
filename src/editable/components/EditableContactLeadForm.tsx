@@ -34,29 +34,37 @@ export function EditableContactLeadForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="mt-8 border-t-4 border-black bg-white pt-7">
+    <form onSubmit={handleSubmit} className="grid gap-4">
       <div className="grid gap-4 md:grid-cols-2">
-        <Field name="name" label="Full name" placeholder="Your name" required />
-        <Field name="email" type="email" label="Email address" placeholder="you@example.com" required />
+        <Field name="name" label="Name" placeholder="Name *" required />
+        <Field name="phone" label="Contact" placeholder="Contact *" required />
       </div>
-      <div className="mt-4 grid gap-4 md:grid-cols-2">
-        <Field name="phone" label="Phone number" placeholder="Optional" />
-        <Field name="subject" label="Subject" placeholder="How can we help?" />
+      <Field name="email" type="email" label="Email" placeholder="Email *" required />
+      <div className="grid gap-4 md:grid-cols-2">
+        <Field name="subject" label="Company" placeholder="Company *" required />
+        <label className="sr-only" htmlFor="region">Region</label>
+        <select id="region" name="region" defaultValue="" className="h-[3.65rem] rounded-xl border border-[var(--slot4-navy)] bg-white px-6 text-xl text-slate-400 outline-none transition focus:border-[var(--slot4-blue)]">
+          <option value="" disabled>Region *</option>
+          <option>North & East</option>
+          <option>West</option>
+          <option>South</option>
+          <option>International</option>
+        </select>
       </div>
-      <label className="mt-4 grid gap-2 text-sm font-black opacity-75">
-        Message
-        <textarea name="message" required rows={6} placeholder="Tell us what you need help with..." className="border border-black bg-white px-4 py-3 text-base font-medium outline-none transition focus:border-[#c92f2f]" />
+      <label className="sr-only" htmlFor="lead-message">Message</label>
+      <label className="grid">
+        <textarea id="lead-message" name="message" required rows={6} placeholder="Message *" className="rounded-xl border border-[var(--slot4-navy)] bg-white px-6 py-5 text-xl outline-none transition placeholder:text-slate-400 focus:border-[var(--slot4-blue)]" />
       </label>
       <input name="company" tabIndex={-1} autoComplete="off" className="hidden" aria-hidden="true" />
       {message ? (
-        <div className={`mt-5 flex items-start gap-3 border px-4 py-3 text-sm font-bold ${status === 'success' ? 'border-emerald-800 bg-emerald-50 text-emerald-800' : 'border-red-700 bg-red-50 text-red-700'}`}>
+        <div className={`flex items-start gap-3 rounded-xl border px-4 py-3 text-sm font-bold ${status === 'success' ? 'border-emerald-800 bg-emerald-50 text-emerald-800' : 'border-red-700 bg-red-50 text-red-700'}`}>
           {status === 'success' ? <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0" /> : null}
           <span>{message}</span>
         </div>
       ) : null}
-      <button type="submit" disabled={status === 'submitting'} className="mt-6 inline-flex h-[3.25rem] w-full items-center justify-center gap-2 border border-black bg-black px-6 text-xs font-black uppercase tracking-[0.24em] text-white transition hover:bg-[#c92f2f] disabled:cursor-not-allowed disabled:opacity-70">
+      <button type="submit" disabled={status === 'submitting'} className="wire-button group mt-3 inline-flex h-[3.65rem] w-fit items-center justify-center gap-4 rounded-full border-2 border-[var(--slot4-navy)] bg-transparent px-6 text-xl font-black text-[var(--slot4-blue)] transition hover:bg-white disabled:cursor-not-allowed disabled:opacity-70">
         {status === 'submitting' ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
-        Send message
+        Get in touch <span className="wire-button-dot"><span aria-hidden>→</span></span>
       </button>
     </form>
   )
@@ -64,9 +72,9 @@ export function EditableContactLeadForm() {
 
 function Field({ name, label, type = 'text', placeholder, required = false }: { name: string; label: string; type?: string; placeholder?: string; required?: boolean }) {
   return (
-    <label className="grid gap-2 text-sm font-black opacity-75">
-      {label}
-      <input name={name} type={type} required={required} placeholder={placeholder} className="h-[3.25rem] border border-black bg-white px-4 text-base font-medium outline-none transition focus:border-[#c92f2f]" />
+    <label className="grid">
+      <span className="sr-only">{label}</span>
+      <input name={name} type={type} required={required} placeholder={placeholder} className="h-[3.65rem] rounded-xl border border-[var(--slot4-navy)] bg-white px-6 text-xl outline-none transition placeholder:text-slate-400 focus:border-[var(--slot4-blue)]" />
     </label>
   )
 }

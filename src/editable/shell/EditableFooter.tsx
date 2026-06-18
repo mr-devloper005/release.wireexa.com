@@ -1,44 +1,48 @@
 'use client'
 
 import Link from 'next/link'
-import { ArrowRight } from 'lucide-react'
 import { SITE_CONFIG } from '@/lib/site-config'
-import { globalContent } from '@/editable/content/global.content'
-import { useEditableLocalAuthSession } from '@/editable/components/EditableLocalAuthForms'
+
+const footerLinks = [
+  { label: 'Home', href: '/' },
+  { label: 'About', href: '/about' },
+  { label: 'Contact', href: '/contact' },
+  { label: 'Search', href: '/search' },
+  { label: 'Login', href: '/login' },
+  { label: 'Register', href: '/signup' },
+]
 
 export function EditableFooter() {
   const year = new Date().getFullYear()
-  const { session, logout } = useEditableLocalAuthSession()
 
   return (
-    <footer className="border-t-8 border-[var(--slot4-accent)] bg-black text-white">
-      <div className="mx-auto max-w-[1440px] px-4 py-14 sm:px-6 lg:px-10 lg:py-20">
-        <div className="grid gap-12 lg:grid-cols-[1.2fr_.7fr_.7fr]">
+    <footer className="bg-[linear-gradient(180deg,#262b74_0%,#3156a8_100%)] text-white">
+      <div className="mx-auto max-w-[1660px] px-4 py-12 sm:px-6 lg:px-10 xl:px-12">
+        <div className="grid gap-10 lg:grid-cols-[1fr_1.5fr] lg:items-center">
           <div>
-            <Link href="/" className="editorial-brand text-5xl font-black text-[var(--slot4-accent)] sm:text-6xl">{SITE_CONFIG.name}</Link>
-            <p className="mt-6 max-w-xl text-sm leading-7 text-white/62">{globalContent.footer?.description || SITE_CONFIG.description}</p>
-            <form action="/signup" className="mt-8 flex max-w-xl border border-white/35">
-              <input name="email" type="email" placeholder="Email for newsroom updates" className="min-w-0 flex-1 bg-transparent px-4 py-4 text-sm outline-none placeholder:text-white/40" />
-              <button className="bg-[var(--slot4-accent)] px-5 text-xs font-black uppercase tracking-[.14em]">Subscribe</button>
-            </form>
+            <Link href="/" className="flex items-center gap-3">
+              <span className="wire-logo-mark">rw</span>
+              <span className="text-3xl font-light tracking-[-.055em]"><span>release</span><span className="font-black">wire</span></span>
+              <span className="sr-only">{SITE_CONFIG.name}</span>
+            </Link>
+            <p className="mt-6 max-w-md text-base leading-7 text-white/72">
+              Press release distribution, brand announcements, and media updates presented in a clean public newsroom.
+            </p>
           </div>
-          <div>
-            <h3 className="border-b border-white/25 pb-3 text-[10px] font-black uppercase tracking-[.22em] text-white/55">Explore</h3>
-            <div className="mt-4 grid gap-3">
-              <Link href="/search" className="group inline-flex items-center justify-between text-sm font-black uppercase tracking-[.08em] hover:text-[var(--slot4-accent)]">Archive<ArrowRight className="h-4 w-4" /></Link>
-            </div>
-          </div>
-          <div>
-            <h3 className="border-b border-white/25 pb-3 text-[10px] font-black uppercase tracking-[.22em] text-white/55">Publication</h3>
-            <div className="mt-4 grid gap-3">
-              <Link href="/about" className="text-sm font-black uppercase tracking-[.08em] hover:text-[var(--slot4-accent)]">About</Link>
-              <Link href="/contact" className="text-sm font-black uppercase tracking-[.08em] hover:text-[var(--slot4-accent)]">Contact</Link>
-              {session ? <><Link href="/create" className="text-sm font-black uppercase tracking-[.08em] hover:text-[var(--slot4-accent)]">Publish</Link><button onClick={logout} className="text-left text-sm font-black uppercase tracking-[.08em] hover:text-[var(--slot4-accent)]">Logout</button></> : <><Link href="/login" className="text-sm font-black uppercase tracking-[.08em] hover:text-[var(--slot4-accent)]">Log in</Link><Link href="/signup" className="text-sm font-black uppercase tracking-[.08em] hover:text-[var(--slot4-accent)]">Subscribe</Link></>}
-            </div>
-          </div>
+
+          <nav className="grid grid-cols-2 gap-4 sm:grid-cols-3">
+            {footerLinks.map((item) => (
+              <Link key={item.href} href={item.href} className="rounded-full border border-white/18 px-5 py-3 text-center font-black transition hover:border-[var(--slot4-accent)] hover:text-[var(--slot4-accent)]">
+                {item.label}
+              </Link>
+            ))}
+          </nav>
+        </div>
+
+        <div className="mt-10 border-t border-white/45 pt-6 text-sm text-white/70">
+          Copyright © {year} {SITE_CONFIG.name}. All Rights Reserved.
         </div>
       </div>
-      <div className="border-t border-white/20 px-4 py-5 text-center text-[10px] font-black uppercase tracking-[.18em] text-white/45">© {year} {SITE_CONFIG.name}. Independent media and public information.</div>
     </footer>
   )
 }
