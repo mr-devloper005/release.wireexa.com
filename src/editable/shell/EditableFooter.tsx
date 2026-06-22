@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { SITE_CONFIG } from '@/lib/site-config'
+import { useEditableLocalAuthSession } from '@/editable/components/EditableLocalAuthForms'
 
 const footerLinks = [
   { label: 'Home', href: '/' },
@@ -14,6 +15,8 @@ const footerLinks = [
 
 export function EditableFooter() {
   const year = new Date().getFullYear()
+  const { session, logout } = useEditableLocalAuthSession()
+  const visibleLinks = session ? footerLinks.filter((item) => item.href !== '/login' && item.href !== '/signup') : footerLinks
 
   return (
     <footer className="bg-[linear-gradient(180deg,#262b74_0%,#3156a8_100%)] text-white">
@@ -31,11 +34,16 @@ export function EditableFooter() {
           </div>
 
           <nav className="grid grid-cols-2 gap-4 sm:grid-cols-3">
-            {footerLinks.map((item) => (
+            {visibleLinks.map((item) => (
               <Link key={item.href} href={item.href} className="rounded-full border border-white/18 px-5 py-3 text-center font-black transition hover:border-[var(--slot4-accent)] hover:text-[var(--slot4-accent)]">
                 {item.label}
               </Link>
             ))}
+            {session ? (
+              <button type="button" onClick={logout} className="rounded-full border border-white/18 px-8 py-3 text-center font-black transition hover:border-[var(--slot4-accent)] hover:text-[var(--slot4-accent)]">
+                Logout
+              </button>
+            ) : null}
           </nav>
         </div>
 
