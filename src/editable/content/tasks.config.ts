@@ -11,6 +11,8 @@ export const slot4TaskSupport = {
   image: false,
 } satisfies Record<TaskKey, boolean>;
 
+
+
 export const slot4TaskNotes = {
   article: "Article pages and article detail backlinks",
   mediaDistribution: "Newswire updates, announcements, press coverage, and media distribution posts",
