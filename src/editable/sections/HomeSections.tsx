@@ -1,12 +1,11 @@
 import Link from 'next/link'
-import { ArrowRight, BarChart3, Megaphone, PieChart, Search, Send, ShieldCheck, TrendingUp } from 'lucide-react'
+import { ArrowRight, BarChart3, Megaphone, PieChart, Send, ShieldCheck, TrendingUp } from 'lucide-react'
 import type { SitePost } from '@/lib/site-connector'
 import type { HomeTimeSection } from '@/lib/task-data'
 import type { TaskKey } from '@/lib/site-config'
 import { SITE_CONFIG } from '@/lib/site-config'
 import { editableDesignContract as dc } from '@/editable/layouts/design-contract'
 import { EditableContactLeadForm } from '@/editable/components/EditableContactLeadForm'
-import { CompactIndexCard, getEditableCategory, getEditableExcerpt, getEditablePostImage, postHref, RailPostCard } from '@/editable/cards/PostCards'
 
 type HomeSectionProps = {
   primaryTask: TaskKey
@@ -32,10 +31,6 @@ const testimonials = [
   ['The servicing team is cooperative, efficient, and focused on helping outreach efforts land with the right context.', 'Aniruddha Basu, Corporate Communications'],
   ['A polished newsroom makes it easier to present stories professionally and keep brand visibility consistent across campaigns.', 'Meera Shah, Brand Strategy'],
 ]
-
-function safePosts(posts: SitePost[]) {
-  return posts.filter((post) => post && (post.slug || post.id) && post.title)
-}
 
 function SectionTitle({ label, title, light = false }: { label?: string; title: string; light?: boolean }) {
   return (
@@ -80,89 +75,15 @@ export function EditableHomeHero(_props: HomeSectionProps) {
   )
 }
 
-export function EditableStoryRail({ primaryTask, primaryRoute, posts }: HomeSectionProps) {
-  const release = safePosts(posts)[0]
-  return (
-    <section className="bg-white">
-      <div className={`${dc.shell.section} py-16 sm:py-20`}>
-        <div className="grid gap-8 lg:grid-cols-[1fr_auto] lg:items-start">
-          <div>
-            <SectionTitle title="News Releases" />
-            {release ? (
-              <Link href={postHref(primaryTask, release, primaryRoute)} className="group mt-8 block max-w-6xl">
-                <p className="text-base text-slate-500">{release.publishedAt ? new Date(release.publishedAt).toLocaleString() : 'Latest update'}</p>
-                <h2 className="mt-3 text-2xl font-black leading-tight tracking-[-.035em] text-[var(--slot4-navy)] sm:text-3xl">{release.title}</h2>
-                <p className="mt-3 line-clamp-2 text-xl leading-8 text-slate-800">{getEditableExcerpt(release, 150) || 'Read the complete announcement and related media details.'}</p>
-              </Link>
-            ) : (
-              <div className="mt-8 rounded-3xl border border-dashed border-[var(--slot4-navy)]/20 bg-[var(--slot4-page-bg)] p-8">
-                <h2 className="text-2xl font-black text-[var(--slot4-navy)]">No releases published yet</h2>
-                <p className="mt-2 text-slate-600">New media announcements will appear here automatically.</p>
-              </div>
-            )}
-          </div>
-          <Link href="/search" className="wire-button group inline-flex items-center gap-4 self-start rounded-full border-2 border-[var(--slot4-navy)] bg-white px-6 py-3 text-xl font-black text-[var(--slot4-blue)]">
-            See all news <RoundArrow />
-          </Link>
-        </div>
-      </div>
-    </section>
-  )
+export function EditableStoryRail(_props: HomeSectionProps) {
+  return null
 }
 
-export function EditableMagazineSplit({ primaryTask, primaryRoute, posts }: HomeSectionProps) {
-  const items = safePosts(posts)
-  const featured = items.slice(1, 5)
-  if (!featured.length) return null
-  return (
-    <section className="bg-[#f4f7fc]">
-      <div className={`${dc.shell.section} py-16 sm:py-20`}>
-        <SectionTitle title="Featured News" />
-        <div className="mt-8 grid gap-6 lg:grid-cols-[1.15fr_.85fr]">
-          {featured[0] ? (
-            <Link href={postHref(primaryTask, featured[0], primaryRoute)} className="group wire-card-hover overflow-hidden rounded-xl bg-white shadow-sm">
-              <div className="relative aspect-[16/10] overflow-hidden bg-[var(--slot4-media-bg)]">
-                <img src={getEditablePostImage(featured[0])} alt={featured[0].title} className="h-full w-full object-cover transition duration-700 group-hover:scale-105" />
-              </div>
-              <div className="p-6">
-                <p className="text-xs font-black uppercase tracking-[.2em] text-[var(--slot4-blue)]">Featured release</p>
-                <h3 className="mt-3 text-3xl font-black leading-tight tracking-[-.04em] text-[var(--slot4-navy)]">{featured[0].title}</h3>
-                <p className="mt-3 line-clamp-3 text-lg leading-8 text-slate-600">{getEditableExcerpt(featured[0], 210)}</p>
-              </div>
-            </Link>
-          ) : null}
-          <div className="grid gap-6">
-            {featured.slice(1, 3).map((post, index) => (
-              <Link key={post.id || post.slug} href={postHref(primaryTask, post, primaryRoute)} className="group wire-card-hover grid overflow-hidden rounded-xl bg-white shadow-sm sm:grid-cols-[44%_1fr]">
-                <div className="relative min-h-56 overflow-hidden bg-[var(--slot4-media-bg)]">
-                  <img src={getEditablePostImage(post)} alt={post.title} className="absolute inset-0 h-full w-full object-cover transition duration-700 group-hover:scale-105" />
-                </div>
-                <div className="p-6">
-                  <p className="text-xs font-black uppercase tracking-[.2em] text-[var(--slot4-blue)]">0{index + 1} / {getEditableCategory(post)}</p>
-                  <h3 className="mt-3 text-2xl font-black leading-tight text-[var(--slot4-navy)]">{post.title}</h3>
-                  <p className="mt-3 line-clamp-3 text-slate-600">{getEditableExcerpt(post, 140)}</p>
-                </div>
-              </Link>
-            ))}
-          </div>
-        </div>
-        <div className="wire-marquee mt-8">
-          <div className="wire-marquee-track gap-5">
-            {[...items.slice(4, 12), ...items.slice(4, 12)].map((post, index) => (
-              <div key={`${post.id || post.slug}-${index}`} className="w-[270px] shrink-0">
-                <RailPostCard post={post} href={postHref(primaryTask, post, primaryRoute)} index={index} />
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-    </section>
-  )
+export function EditableMagazineSplit(_props: HomeSectionProps) {
+  return null
 }
 
-export function EditableTimeCollections({ primaryTask, primaryRoute, posts, timeSections }: HomeSectionProps) {
-  const collected = timeSections.flatMap((section) => section.posts)
-  const items = safePosts(collected.length ? collected : posts)
+export function EditableTimeCollections(_props: HomeSectionProps) {
   return (
     <>
       <section className="bg-[linear-gradient(180deg,#292b74_0%,#3156a8_100%)] text-white">
@@ -228,7 +149,8 @@ export function EditableTimeCollections({ primaryTask, primaryRoute, posts, time
           <p className="mt-7 text-xl leading-8 text-black">Want tomorrow&apos;s media coverage? Register with us to get your press release distributed across top-tier media channels.</p>
           <div className="mt-12 grid gap-10 lg:grid-cols-[.78fr_1.22fr] lg:items-start">
             <div className="relative min-h-[29rem] overflow-hidden rounded-none bg-[var(--slot4-media-bg)]">
-              <img src={items[0] ? getEditablePostImage(items[0]) : '/placeholder.svg?height=900&width=1200'} alt="" className="absolute inset-0 h-full w-full object-cover" />
+              <div className="absolute inset-0 bg-[linear-gradient(135deg,#e8f1fb_0%,#ffffff_48%,#dbe7fb_100%)]" />
+              <div className="absolute left-1/2 top-1/2 grid h-52 w-52 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full bg-white/80 text-center text-2xl font-black text-[var(--slot4-navy)] shadow-[0_24px_70px_rgba(25,23,85,.14)]">Your story<br />goes here</div>
               <div className="absolute -left-10 -top-10 h-36 w-36 rounded-full bg-[#69cfd2]/75" />
               <div className="absolute bottom-0 right-0 h-24 w-44 bg-[radial-gradient(circle,#f2bb3f_2px,transparent_3px)] [background-size:22px_22px]" />
             </div>
@@ -236,26 +158,6 @@ export function EditableTimeCollections({ primaryTask, primaryRoute, posts, time
           </div>
         </div>
       </section>
-
-      {items.length ? (
-        <section className="bg-white">
-          <div className={`${dc.shell.section} py-16`}>
-            <div className="grid gap-10 lg:grid-cols-[1fr_.7fr]">
-              <div>
-                <SectionTitle label="More updates" title="The briefing" />
-                <div className="mt-6 grid gap-3">
-                  {items.slice(0, 5).map((post, index) => <CompactIndexCard key={post.id || post.slug} post={post} href={postHref(primaryTask, post, primaryRoute)} index={index} />)}
-                </div>
-              </div>
-              <form action="/search" className="self-start rounded-2xl border border-[var(--slot4-navy)]/15 bg-[#f5f8fd] p-7 shadow-sm">
-                <div className="flex items-center gap-3 text-xs font-black uppercase tracking-[.2em] text-[var(--slot4-blue)]"><Search className="h-4 w-4" /> Search releases</div>
-                <input name="q" placeholder="Search stories" className="mt-5 h-14 w-full rounded-xl border border-[var(--slot4-navy)]/20 bg-white px-4 outline-none focus:border-[var(--slot4-blue)]" />
-                <button className="mt-4 inline-flex w-full items-center justify-center gap-3 rounded-full bg-[var(--slot4-navy)] px-5 py-3 font-black text-white">Search <ArrowRight className="h-4 w-4" /></button>
-              </form>
-            </div>
-          </div>
-        </section>
-      ) : null}
     </>
   )
 }

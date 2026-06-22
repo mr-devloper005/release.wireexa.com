@@ -4,6 +4,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { CircleUserRound, Menu, Search, X } from 'lucide-react'
 import { SITE_CONFIG } from '@/lib/site-config'
+import { useEditableLocalAuthSession } from '@/editable/components/EditableLocalAuthForms'
 
 const navLinks = [
   { label: 'Home', href: '/' },
@@ -15,6 +16,8 @@ const navLinks = [
 
 export function EditableNavbar() {
   const [open, setOpen] = useState(false)
+  const { session, logout } = useEditableLocalAuthSession()
+  const visibleLinks = session ? navLinks.filter((item) => item.href !== '/login') : navLinks
 
   return (
     <header className="sticky top-0 z-50 bg-[var(--slot4-navy)] text-white shadow-[0_1px_0_rgba(255,255,255,.08)]">
@@ -34,13 +37,21 @@ export function EditableNavbar() {
         </Link>
 
         <nav className="hidden items-center justify-center gap-8 text-[.95rem] font-black lg:flex">
-          {navLinks.map((item) => <Link key={item.href} href={item.href} className="transition hover:text-[var(--slot4-accent)]">{item.label}</Link>)}
+          {visibleLinks.map((item) => <Link key={item.href} href={item.href} className="transition hover:text-[var(--slot4-accent)]">{item.label}</Link>)}
         </nav>
 
         <div className="flex items-center justify-end gap-3 sm:gap-4">
-          <Link href="/signup" className="inline-flex items-center gap-2 rounded-full bg-[var(--slot4-blue)] px-3 py-2 text-sm font-black text-white sm:px-4">
-            <CircleUserRound className="h-5 w-5" /> Register
-          </Link>
+          {session ? (
+            <>
+              <span className="hidden max-w-40 truncate text-sm font-black text-white/85 sm:inline">Hi, {session.name}</span>
+              <Link href="/create" className="hidden rounded-full border border-white/20 px-4 py-2 text-sm font-black transition hover:border-[var(--slot4-accent)] hover:text-[var(--slot4-accent)] sm:inline-flex">Create</Link>
+              <button type="button" onClick={logout} className="rounded-full bg-[var(--slot4-blue)] px-4 py-2 text-sm font-black text-white transition hover:bg-[var(--slot4-accent)] hover:text-[var(--slot4-navy)]">Logout</button>
+            </>
+          ) : (
+            <Link href="/signup" className="inline-flex items-center gap-2 rounded-full bg-[var(--slot4-blue)] px-3 py-2 text-sm font-black text-white sm:px-4">
+              <CircleUserRound className="h-5 w-5" /> Register
+            </Link>
+          )}
           <Link href="/search" aria-label="Search" className="hidden h-11 w-11 items-center justify-center rounded-full lg:flex"><Search className="h-5 w-5 text-white/75 transition hover:text-[var(--slot4-accent)]" /></Link>
         </div>
       </div>
@@ -48,9 +59,10 @@ export function EditableNavbar() {
       {open ? (
         <div className="border-t border-white/15 bg-[var(--slot4-navy)] px-4 py-4 lg:hidden">
           <div className="grid gap-2">
-            {[...navLinks, { label: 'Register', href: '/signup' }].map((item) => (
+            {[...visibleLinks, ...(session ? [{ label: 'Create', href: '/create' }] : [{ label: 'Register', href: '/signup' }])].map((item) => (
               <Link key={`${item.label}-${item.href}`} href={item.href} onClick={() => setOpen(false)} className="rounded-2xl bg-white/8 px-4 py-3 text-sm font-black">{item.label}</Link>
             ))}
+            {session ? <button type="button" onClick={() => { logout(); setOpen(false) }} className="rounded-2xl bg-white/8 px-4 py-3 text-left text-sm font-black">Logout</button> : null}
           </div>
         </div>
       ) : null}
